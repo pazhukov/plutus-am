@@ -45,7 +45,6 @@ func NewAsset(w http.ResponseWriter, r *http.Request) {
 	var input Asset
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		log.Fatal(err.Error())
 		var info InfoMessage
 		info.Code = 300
 		info.Message = err.Error()
@@ -123,6 +122,123 @@ func GetAsset(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func DeleteAsset(w http.ResponseWriter, r *http.Request) {
+
+	inputVar := mux.Vars(r)["id"]
+	assetID, err := strconv.Atoi(inputVar)
+	if err != nil {
+		var info InfoMessage
+		info.Code = 300
+		info.Message = "Can't convert asset ID to int"
+		json.NewEncoder(w).Encode(info)
+		return
+	}
+
+	status := DeleteAssetByID(assetID)
+
+	if status == -1 {
+		var info InfoMessage
+		info.Code = 500
+		info.Message = "Service error"
+		json.NewEncoder(w).Encode(info)
+	} else if status == 404 {
+		var info InfoMessage
+		info.Code = 404
+		info.Message = "Asset with ID = " + strconv.Itoa(assetID) + " not found"
+		json.NewEncoder(w).Encode(info)
+	} else if status == 200 {
+		var info InfoMessage
+		info.Code = 200
+		info.Message = "Asset deleted"
+		json.NewEncoder(w).Encode(info)
+	}
+
+}
+
+func UpdateAsset(w http.ResponseWriter, r *http.Request) {
+
+	var input Asset
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		var info InfoMessage
+		info.Code = 300
+		info.Message = err.Error()
+		json.NewEncoder(w).Encode(info)
+		return
+	}
+
+	if input.ID == 0 {
+		var info InfoMessage
+		info.Code = 301
+		info.Message = "Add Asset ID for Update"
+		json.NewEncoder(w).Encode(info)
+		return
+	}
+
+	var status = UpdateAssetInDB(input)
+
+	if status == -1 {
+		var info InfoMessage
+		info.Code = 500
+		info.Message = "Service error"
+		json.NewEncoder(w).Encode(info)
+	} else if status == 404 {
+		var info InfoMessage
+		info.Code = 404
+		info.Message = "Asset with ID = " + strconv.Itoa(input.ID) + " not found"
+		json.NewEncoder(w).Encode(info)
+	} else if status == 200 {
+		var info InfoMessage
+		info.Code = 200
+		info.Message = "Asset updated"
+		json.NewEncoder(w).Encode(info)
+	}
+}
+
+func GetAssets(w http.ResponseWriter, r *http.Request) {
+	inputVar := mux.Vars(r)["page"]
+	page, err := strconv.Atoi(inputVar)
+	if err != nil {
+		var info InfoMessage
+		info.Code = 300
+		info.Message = "Can't convert page ID to int"
+		json.NewEncoder(w).Encode(info)
+		return
+	}
+	assets, next_page := GetAssetList(page)
+
+	if next_page == -1 {
+		var info InfoMessage
+		info.Code = 500
+		info.Message = "Service error"
+		json.NewEncoder(w).Encode(info)
+	} else {
+		var list AssetList
+		list.Next_Page = next_page
+		list.Asset = assets
+		json.NewEncoder(w).Encode(list)
+	}
+
+}
+
+func GetAssetsStartPage(w http.ResponseWriter, r *http.Request) {
+
+	assets, next_page := GetAssetList(0)
+
+	if next_page == -1 {
+		var info InfoMessage
+		info.Code = 500
+		info.Message = "Service error"
+		json.NewEncoder(w).Encode(info)
+	} else {
+		var list AssetList
+		list.Next_Page = next_page
+		list.Asset = assets
+		json.NewEncoder(w).Encode(list)
+	}
+
+}
+
 func AddNewCode(w http.ResponseWriter, r *http.Request) {
 
 	var input AssetCodeHTTP
@@ -178,46 +294,51 @@ func AddNewCode(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GetAssets(w http.ResponseWriter, r *http.Request) {
-	inputVar := mux.Vars(r)["page"]
-	page, err := strconv.Atoi(inputVar)
+func DeleteCode(w http.ResponseWriter, r *http.Request) {
+
+	var input AssetCodeHTTP
+	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
+		log.Fatal(err.Error())
 		var info InfoMessage
 		info.Code = 300
-		info.Message = "Can't convert page ID to int"
+		info.Message = err.Error()
 		json.NewEncoder(w).Encode(info)
 		return
 	}
-	assets, next_page := GetAssetList(page)
 
-	if next_page == -1 {
+	if input.ID == 0 {
+		var info InfoMessage
+		info.Code = 301
+		info.Message = "Asset ID can't be empty"
+		json.NewEncoder(w).Encode(info)
+		return
+	}
+
+	if input.Code == "" {
+		var info InfoMessage
+		info.Code = 302
+		info.Message = "Asset Code can't be empty"
+		json.NewEncoder(w).Encode(info)
+		return
+	}
+
+	var status = DeleteAssetCode(input)
+
+	if status == -1 {
 		var info InfoMessage
 		info.Code = 500
 		info.Message = "Service error"
 		json.NewEncoder(w).Encode(info)
-	} else {
-		var list AssetList
-		list.Next_Page = next_page
-		list.Asset = assets
-		json.NewEncoder(w).Encode(list)
-	}
-
-}
-
-func GetAssetsStartPage(w http.ResponseWriter, r *http.Request) {
-
-	assets, next_page := GetAssetList(0)
-
-	if next_page == -1 {
+	} else if status == 404 {
 		var info InfoMessage
-		info.Code = 500
-		info.Message = "Service error"
+		info.Code = 404
+		info.Message = "Asset Code not found"
 		json.NewEncoder(w).Encode(info)
-	} else {
-		var list AssetList
-		list.Next_Page = next_page
-		list.Asset = assets
-		json.NewEncoder(w).Encode(list)
+	} else if status == 200 {
+		var info InfoMessage
+		info.Code = 200
+		info.Message = "Asset Code deleted"
+		json.NewEncoder(w).Encode(info)
 	}
-
 }

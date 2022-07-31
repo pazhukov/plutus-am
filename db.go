@@ -26,7 +26,7 @@ func AssetNewItem(item Asset) int {
 
 	var lastInsertId int64
 
-	res, err := database.Exec("insert into assets (title, type_id, currency_id) values (?, ?, ?)", item.Title, item.TypeID, item.CurrencyID)
+	res, err := database.Exec("INSERT INTO assets (title, type_id, currency_id) VALUES (?, ?, ?)", item.Title, item.TypeID, item.CurrencyID)
 	if err != nil {
 		log.Println("Insert Asset")
 		log.Println(err)
@@ -43,7 +43,7 @@ func AssetNewItem(item Asset) int {
 	}
 
 	for _, element := range item.Codes {
-		_, err := database.Exec("insert into assets_codes (asset, code) values (?, ?)", lastInsertId, element.Code)
+		_, err := database.Exec("INSERT INTO assets_codes (asset, code) VALUES (?, ?)", lastInsertId, element.Code)
 		if err != nil {
 			log.Println("Insert Codes")
 			log.Println(err)
@@ -121,6 +121,104 @@ func GetAssetByID(assetID int) (Asset, int) {
 	return asset, 200
 }
 
+func DeleteAssetByID(assetID int) int {
+
+	openDBConnection()
+
+	rows, err := database.Query("SELECT id FROM assets WHERE id = ?", assetID)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		count = count + 1
+	}
+
+	if count == 0 {
+		closeDBConnection()
+		return 404
+
+	}
+
+	_, err_del1 := database.Exec("DELETE from assets WHERE id = ?", assetID)
+	if err_del1 != nil {
+		log.Println("Delete Asset")
+		log.Println(err_del1)
+		closeDBConnection()
+		return -1
+	}
+
+	_, err_del2 := database.Exec("DELETE from assets_codes WHERE asset = ?", assetID)
+	if err_del2 != nil {
+		log.Println("Delete Code")
+		log.Println(err_del2)
+		closeDBConnection()
+		return -1
+	}
+
+	closeDBConnection()
+
+	return 200
+}
+
+func UpdateAssetInDB(asset Asset) int {
+
+	openDBConnection()
+	rows, err := database.Query("SELECT id FROM assets WHERE id = ?", asset.ID)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		count = count + 1
+	}
+
+	if count == 0 {
+		closeDBConnection()
+		return 404
+
+	}
+
+	_, err_upd := database.Exec("UPDATE assets SET title = ?, type_id = ?, currency_id = ? WHERE id = ?", asset.Title, asset.TypeID, asset.CurrencyID, asset.ID)
+	if err_upd != nil {
+		log.Println("Update Asset")
+		log.Println(err_upd)
+		closeDBConnection()
+		return -1
+	}
+
+	_, err_del1 := database.Exec("DELETE from assets_codes WHERE asset = ?", asset.ID)
+	if err_del1 != nil {
+		log.Println("Delete Asset Code")
+		log.Println(err_del1)
+		closeDBConnection()
+		return -1
+	}
+
+	for _, element := range asset.Codes {
+		_, err := database.Exec("INSERT INTO assets_codes (asset, code) VALUES (?, ?)", asset.ID, element.Code)
+		if err != nil {
+			log.Println("Insert Codes")
+			log.Println(err)
+			closeDBConnection()
+			return -1
+		}
+	}
+
+	closeDBConnection()
+
+	return 200
+
+}
+
 func AddNewAssetCode(item AssetCodeHTTP) int {
 	openDBConnection()
 
@@ -156,15 +254,52 @@ func AddNewAssetCode(item AssetCodeHTTP) int {
 		count_c = count_c + 1
 	}
 
-	if count > 0 {
+	if count_c > 0 {
 		closeDBConnection()
 		return 300
 
 	}
 
-	_, err_i := database.Exec("insert into assets_codes (asset, code) values (?, ?)", item.ID, item.Code)
+	_, err_i := database.Exec("INSERT INTO assets_codes (asset, code) VALUES (?, ?)", item.ID, item.Code)
 	if err_i != nil {
 		log.Println("Insert Codes")
+		log.Println(err_i)
+		closeDBConnection()
+		return -1
+	}
+
+	closeDBConnection()
+
+	return 200
+
+}
+
+func DeleteAssetCode(code AssetCodeHTTP) int {
+
+	openDBConnection()
+
+	rows, err := database.Query("SELECT asset, code  FROM assets_codes WHERE asset = ? AND code = ?", code.ID, code.Code)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		count = count + 1
+	}
+
+	if count == 0 {
+		closeDBConnection()
+		return 404
+
+	}
+
+	_, err_i := database.Exec("DELETE  FROM assets_codes WHERE asset = ? AND code = ?", code.ID, code.Code)
+	if err_i != nil {
+		log.Println("Delete Code")
 		log.Println(err_i)
 		closeDBConnection()
 		return -1
@@ -181,7 +316,7 @@ func GetAssetList(page int) ([]Asset, int) {
 
 	var assets []Asset
 
-	rows, err := database.Query("SELECT id, title, type_id, currency_id FROM assets WHERE id > ? order by id limit 10", page)
+	rows, err := database.Query("SELECT id, title, type_id, currency_id FROM assets WHERE id > ? ORDER BY id LIMIT 10", page)
 	if err != nil {
 		log.Println(err)
 		closeDBConnection()

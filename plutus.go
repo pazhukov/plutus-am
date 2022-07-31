@@ -11,10 +11,13 @@ func StartServer() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/asset/", NewAsset).Methods("POST")
+	router.HandleFunc("/asset/", UpdateAsset).Methods("PUT")
 	router.HandleFunc("/asset/{id}", GetAsset).Methods("GET")
+	router.HandleFunc("/asset/{id}", DeleteAsset).Methods("DELETE")
 	router.HandleFunc("/assets/{page}", GetAssets).Methods("GET")
 	router.HandleFunc("/assets/", GetAssetsStartPage).Methods("GET")
 	router.HandleFunc("/code/", AddNewCode).Methods("POST")
+	router.HandleFunc("/code/", DeleteCode).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":11000", router))
 
