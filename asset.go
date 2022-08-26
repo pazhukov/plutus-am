@@ -42,6 +42,8 @@ type AssetList struct {
 
 func NewAsset(w http.ResponseWriter, r *http.Request) {
 
+	SetupCORS(&w, r)
+
 	var input Asset
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -95,6 +97,8 @@ func NewAsset(w http.ResponseWriter, r *http.Request) {
 
 func GetAsset(w http.ResponseWriter, r *http.Request) {
 
+	SetupCORS(&w, r)
+
 	inputVar := mux.Vars(r)["id"]
 	assetID, err := strconv.Atoi(inputVar)
 	if err != nil {
@@ -123,6 +127,8 @@ func GetAsset(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteAsset(w http.ResponseWriter, r *http.Request) {
+
+	SetupCORS(&w, r)
 
 	inputVar := mux.Vars(r)["id"]
 	assetID, err := strconv.Atoi(inputVar)
@@ -156,6 +162,8 @@ func DeleteAsset(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateAsset(w http.ResponseWriter, r *http.Request) {
+
+	SetupCORS(&w, r)
 
 	var input Asset
 	err := json.NewDecoder(r.Body).Decode(&input)
@@ -193,9 +201,13 @@ func UpdateAsset(w http.ResponseWriter, r *http.Request) {
 		info.Message = "Asset updated"
 		json.NewEncoder(w).Encode(info)
 	}
+
 }
 
 func GetAssets(w http.ResponseWriter, r *http.Request) {
+
+	SetupCORS(&w, r)
+
 	inputVar := mux.Vars(r)["page"]
 	page, err := strconv.Atoi(inputVar)
 	if err != nil {
@@ -223,6 +235,8 @@ func GetAssets(w http.ResponseWriter, r *http.Request) {
 
 func GetAssetsStartPage(w http.ResponseWriter, r *http.Request) {
 
+	SetupCORS(&w, r)
+
 	assets, next_page := GetAssetList(0)
 
 	if next_page == -1 {
@@ -240,6 +254,8 @@ func GetAssetsStartPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddNewCode(w http.ResponseWriter, r *http.Request) {
+
+	SetupCORS(&w, r)
 
 	var input AssetCodeHTTP
 	err := json.NewDecoder(r.Body).Decode(&input)
@@ -296,6 +312,8 @@ func AddNewCode(w http.ResponseWriter, r *http.Request) {
 
 func DeleteCode(w http.ResponseWriter, r *http.Request) {
 
+	SetupCORS(&w, r)
+
 	var input AssetCodeHTTP
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -341,4 +359,5 @@ func DeleteCode(w http.ResponseWriter, r *http.Request) {
 		info.Message = "Asset Code deleted"
 		json.NewEncoder(w).Encode(info)
 	}
+
 }

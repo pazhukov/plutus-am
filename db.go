@@ -15,10 +15,12 @@ func openDBConnection() {
 		log.Fatal(err)
 	}
 	database = db
+
 }
 
 func closeDBConnection() {
 	database.Close()
+
 }
 
 func AssetNewItem(item Asset) int {
@@ -55,6 +57,7 @@ func AssetNewItem(item Asset) int {
 	closeDBConnection()
 
 	return 200
+
 }
 
 func GetAssetByID(assetID int) (Asset, int) {
@@ -119,6 +122,7 @@ func GetAssetByID(assetID int) (Asset, int) {
 	closeDBConnection()
 
 	return asset, 200
+
 }
 
 func DeleteAssetByID(assetID int) int {
@@ -163,11 +167,12 @@ func DeleteAssetByID(assetID int) int {
 	closeDBConnection()
 
 	return 200
+
 }
 
 func UpdateAssetInDB(asset Asset) int {
-
 	openDBConnection()
+
 	rows, err := database.Query("SELECT id FROM assets WHERE id = ?", asset.ID)
 	if err != nil {
 		log.Println(err)
@@ -363,5 +368,155 @@ func GetAssetList(page int) ([]Asset, int) {
 	closeDBConnection()
 
 	return assets, current_page
+
+}
+
+func CurrencyNewItem(item Currency) int {
+	openDBConnection()
+
+	rows, err := database.Query("SELECT id FROM currencies WHERE id = ?", item.ID)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		count = count + 1
+	}
+
+	if count > 0 {
+		closeDBConnection()
+		return -2
+	}
+	_, err2 := database.Exec("INSERT INTO currencies (id, title) VALUES (?, ?)", item.ID, item.Title)
+	if err2 != nil {
+		log.Println(err2)
+		closeDBConnection()
+		return -1
+	}
+
+	closeDBConnection()
+
+	return 200
+
+}
+
+func CurrencyUpdateItem(item Currency) int {
+	openDBConnection()
+
+	rows, err := database.Query("SELECT id FROM currencies WHERE id = ?", item.ID)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		count = count + 1
+	}
+
+	if count == 0 {
+		closeDBConnection()
+		return -2
+	}
+
+	_, err2 := database.Exec("UPDATE currencies SET id = ?, title = ? WHERE id = ? ", item.ID, item.Title, item.ID)
+	if err2 != nil {
+		log.Println(err2)
+		closeDBConnection()
+		return -1
+	}
+
+	closeDBConnection()
+
+	return 200
+
+}
+
+func GetCurrencyByID(currencyID int) (Currency, int) {
+	openDBConnection()
+
+	currency := Currency{}
+
+	rows, err := database.Query("SELECT id, title FROM currencies WHERE id = ?", currencyID)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return currency, -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&currency.ID, &currency.Title)
+		if err != nil {
+			log.Println(err)
+			closeDBConnection()
+			return currency, -1
+		}
+		count = count + 1
+	}
+
+	if count == 0 {
+		closeDBConnection()
+		return currency, 404
+	}
+
+	err = rows.Close()
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return currency, -1
+	}
+
+	closeDBConnection()
+
+	return currency, 200
+
+}
+
+func DeleteCurrencyByID(currencyID int) int {
+	openDBConnection()
+
+	rows, err := database.Query("SELECT id, title FROM currencies WHERE id = ?", currencyID)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		count = count + 1
+	}
+
+	if count == 0 {
+		closeDBConnection()
+		return 404
+	}
+
+	err = rows.Close()
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return -1
+	}
+
+	_, err_del1 := database.Exec("DELETE from currencies WHERE id = ?", currencyID)
+	if err_del1 != nil {
+		log.Println(err_del1)
+		closeDBConnection()
+		return -1
+	}
+
+	closeDBConnection()
+
+	return 200
 
 }

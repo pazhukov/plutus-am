@@ -18,6 +18,14 @@ func StartServer() {
 	router.HandleFunc("/assets/", GetAssetsStartPage).Methods("GET")
 	router.HandleFunc("/code/", AddNewCode).Methods("POST")
 	router.HandleFunc("/code/", DeleteCode).Methods("DELETE")
+	router.HandleFunc("/currency/", NewCurrency).Methods("POST")
+	router.HandleFunc("/currency/", UpdateCurrency).Methods("PUT")
+	router.HandleFunc("/currency/{id}", GetCurrency).Methods("GET")
+	router.HandleFunc("/currency/{id}", DeleteCurrency).Methods("DELETE")
+	//router.HandleFunc("/currency/rates", GetLastCurrencyRate).Methods("GET")
+	//router.HandleFunc("/currency/rates/{date}", GetCurrencyRateByDate).Methods("GET")
+
+	router.HandleFunc("/load/currency-rates", LoadCurrencyRates).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":11000", router))
 
