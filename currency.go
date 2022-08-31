@@ -21,6 +21,10 @@ type CurrencyRate struct {
 	Rate     float64 `json:"rate"`
 }
 
+type CurrencyRateList struct {
+	List []CurrencyRate `json:"rates"`
+}
+
 func NewCurrency(w http.ResponseWriter, r *http.Request) {
 
 	var input Currency
@@ -190,7 +194,7 @@ func LoadCurrencyRates(w http.ResponseWriter, r *http.Request) {
 
 	SetupCORS(&w, r)
 
-	data := GetCurrencyRatesCBR("01/01/1900")
+	data := LoadCurrencyRatesCBR("01/01/1900")
 
 	inserted, status := LoadCurrencyRateInDB(data)
 
@@ -225,7 +229,7 @@ func LoadCurrencyRatesByDate(w http.ResponseWriter, r *http.Request) {
 	var dateArray = strings.Split(inputVar, "-")
 	var newDate = dateArray[2] + "/" + dateArray[1] + "/" + dateArray[0]
 
-	data := GetCurrencyRatesCBR(newDate)
+	data := LoadCurrencyRatesCBR(newDate)
 
 	inserted, status := LoadCurrencyRateInDB(data)
 
@@ -241,4 +245,49 @@ func LoadCurrencyRatesByDate(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(info)
 	}
 
+}
+
+func GetLastCurrencyRate(w http.ResponseWriter, r *http.Request) {
+	SetupCORS(&w, r)
+
+	data, status := GetCurrencyRatesCBR("1900-01-01")
+
+	if status == -1 {
+		var info InfoMessage
+		info.Code = 500
+		info.Message = "Service error"
+		json.NewEncoder(w).Encode(info)
+	} else if status == 200 {
+		var list CurrencyRateList
+		list.List = data
+		json.NewEncoder(w).Encode(list)
+	}
+
+}
+
+func GetCurrencyRateByDate(w http.ResponseWriter, r *http.Request) {
+	SetupCORS(&w, r)
+
+	inputVar := mux.Vars(r)["date"]
+	_, err := time.Parse("2006-01-02", inputVar)
+	if err != nil {
+		var info InfoMessage
+		info.Code = 300
+		info.Message = "Wrong date"
+		json.NewEncoder(w).Encode(info)
+		return
+	}
+
+	data, status := GetCurrencyRatesCBR(inputVar)
+
+	if status == -1 {
+		var info InfoMessage
+		info.Code = 500
+		info.Message = "Service error"
+		json.NewEncoder(w).Encode(info)
+	} else if status == 200 {
+		var list CurrencyRateList
+		list.List = data
+		json.NewEncoder(w).Encode(list)
+	}
 }

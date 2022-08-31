@@ -29,7 +29,7 @@ type ValCurs struct {
 	} `xml:"Valute"`
 }
 
-func GetCurrencyRatesCBR(onDate string) []CurrencyRate {
+func LoadCurrencyRatesCBR(onDate string) []CurrencyRate {
 
 	url := "https://www.cbr.ru/scripts/XML_daily.asp"
 	if onDate != "01/01/1900" {

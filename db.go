@@ -567,3 +567,40 @@ func LoadCurrencyRateInDB(rates []CurrencyRate) (int, int) {
 	return inserted, 200
 
 }
+
+func GetCurrencyRatesCBR(onDate string) ([]CurrencyRate, int) {
+	openDBConnection()
+
+	rates := []CurrencyRate{}
+
+	var sql string
+	if onDate == "1900-01-01" {
+		sql = "SELECT max_rates.period as period, max_rates.currency_id as currency_id, IFNULL(rates.rate, 0) as rate FROM (SELECT MAX(period) as period, currency_id FROM currency_rates GROUP BY currency_id) as max_rates LEFT JOIN currency_rates as rates ON max_rates.period = rates.period AND max_rates.currency_id = rates.currency_id"
+	} else {
+		sql = "SELECT max_rates.period as period, max_rates.currency_id as currency_id, IFNULL(rates.rate, 0) as rate FROM (SELECT MAX(period) as period, currency_id FROM currency_rates WHERE period <= '" + onDate + "' GROUP BY currency_id) as max_rates LEFT JOIN currency_rates as rates ON max_rates.period = rates.period AND max_rates.currency_id = rates.currency_id"
+	}
+
+	rows, err := database.Query(sql)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return rates, -1
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		rate := CurrencyRate{}
+		err := rows.Scan(&rate.Period, &rate.Currency, &rate.Rate)
+		if err != nil {
+			log.Println(err)
+			closeDBConnection()
+			return rates, -1
+		}
+		rates = append(rates, rate)
+	}
+
+	closeDBConnection()
+
+	return rates, 200
+
+}
