@@ -2,64 +2,96 @@ package plutus
 
 import (
 	"encoding/xml"
+	"fmt"
+	"io"
+	"log"
+	"math"
+	"net/http"
+	"strconv"
+	"strings"
+
+	"golang.org/x/text/encoding/charmap"
 )
 
-type CBRCurrencyRate struct {
-	Text     string `xml:",chardata"`
-	ID       string `xml:"ID,attr"`
-	NumCode  string `xml:"NumCode"`
-	CharCode string `xml:"CharCode"`
-	Nominal  string `xml:"Nominal"`
-	Name     string `xml:"Name"`
-	Value    string `xml:"Value"`
-}
-
-type CBRRoot struct {
-	XMLName xml.Name          `xml:"ValCurs"`
-	Text    string            `xml:",chardata"`
-	Date    string            `xml:"Date,attr"`
-	Name    string            `xml:"name,attr"`
-	Valute  []CBRCurrencyRate `xml:"Valute"`
+type ValCurs struct {
+	XMLName xml.Name `xml:"ValCurs"`
+	Text    string   `xml:",chardata"`
+	Date    string   `xml:"Date,attr"`
+	Name    string   `xml:"name,attr"`
+	Valute  []struct {
+		Text     string `xml:",chardata"`
+		ID       string `xml:"ID,attr"`
+		NumCode  string `xml:"NumCode"`
+		CharCode string `xml:"CharCode"`
+		Nominal  string `xml:"Nominal"`
+		Name     string `xml:"Name"`
+		Value    string `xml:"Value"`
+	} `xml:"Valute"`
 }
 
 func GetCurrencyRatesCBR(onDate string) []CurrencyRate {
 
-	// resp, err := http.Get("https://www.cbr.ru/scripts/XML_daily.asp")
-	// if err != nil {
-	// 	log.Fatalln(err) // log.Fatal always exits the program, need to check err != nil first
-	// }
-	// defer resp.Body.Close()
+	url := "https://www.cbr.ru/scripts/XML_daily.asp"
+	if onDate != "01/01/1900" {
+		url = url + "?date_req=" + onDate
+	}
 
-	// xmlData := &CBRRoot{}
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Println(err)
+		return []CurrencyRate{}
+	}
+	defer resp.Body.Close()
 
-	// body, _ := ioutil.ReadAll(resp.Body)
-	// err = xml.Unmarshal(body, xmlData)
-	// log.Println(xmlData.Date)
+	xmlData := ValCurs{}
 
-	// d := xml.NewDecoder(resp.Body)
-	// d.CharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
-	// 	switch charset {
-	// 	case "windows-1251":
-	// 		content, _ := ioutil.ReadAll(resp.Body)
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		//return charmap.Windows1251.NewDecoder().Reader(input), nil
-	// 		return bytes.NewReader(content), nil
-	// 	default:
-	// 		return nil, fmt.Errorf("unknown charset: %s", charset)
-	// 	}
-	// }
+	d := xml.NewDecoder(resp.Body)
+	d.CharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
+		switch charset {
+		case "windows-1251":
+			return charmap.Windows1251.NewDecoder().Reader(input), nil
+		default:
+			return nil, fmt.Errorf("unknown charset: %s", charset)
+		}
+	}
+	err_dec := d.Decode(&xmlData)
+	if err_dec != nil {
+		log.Println("Parse error")
+		log.Println(err_dec)
+		return []CurrencyRate{}
+	}
 
-	// err_dec := d.Decode(&xmlData)
-	// if err_dec != nil {
-	// 	log.Println(err_dec)
-	// 	return []CurrencyRate{}
-	// }
+	var out []CurrencyRate
 
-	//if err = xml.NewDecoder(resp.Body).Decode(&xmlData); err != nil {
-	//	log.Fatalln(err)
-	//}
+	var arrDate = strings.Split(xmlData.Date, ".")
+	var newDate = arrDate[2] + "-" + arrDate[1] + "-" + arrDate[0]
 
-	return []CurrencyRate{}
+	for _, element := range xmlData.Valute {
+
+		currcencyID, err1 := strconv.Atoi(element.NumCode)
+		if err1 != nil {
+			log.Println(err1)
+			continue
+		}
+		rate, err2 := strconv.ParseFloat(strings.Replace(element.Value, ",", ".", -1), 64)
+		if err2 != nil {
+			log.Println(err2)
+			continue
+		}
+		nominal, err3 := strconv.ParseFloat(element.Nominal, 64)
+		if err3 != nil {
+			log.Println(err3)
+			continue
+		}
+
+		var cr CurrencyRate
+		cr.Currency = currcencyID
+		cr.Period = newDate
+		cr.Rate = math.Floor(rate/nominal*10000) / 10000
+
+		out = append(out, cr)
+
+	}
+
+	return out
 }

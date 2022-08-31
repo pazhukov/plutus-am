@@ -520,3 +520,50 @@ func DeleteCurrencyByID(currencyID int) int {
 	return 200
 
 }
+
+func LoadCurrencyRateInDB(rates []CurrencyRate) (int, int) {
+	openDBConnection()
+
+	var inserted int
+	for _, element := range rates {
+
+		rows, err := database.Query("SELECT period FROM currency_rates WHERE period = ? and currency_id = ?", element.Period, element.Currency)
+		if err != nil {
+			log.Println(err)
+			closeDBConnection()
+			return 0, -1
+		}
+
+		count := 0
+		defer rows.Close()
+		for rows.Next() {
+			count = count + 1
+		}
+
+		if count > 0 {
+
+			_, err_del := database.Exec("DELETE from currency_rates WHERE period = ? and currency_id = ?", element.Period, element.Currency)
+			if err_del != nil {
+				log.Println(err_del)
+				closeDBConnection()
+				return 0, -1
+			}
+
+		}
+
+		_, err1 := database.Exec("INSERT INTO currency_rates (period, currency_id, rate) VALUES (?, ?, ?)", element.Period, element.Currency, element.Rate)
+		if err1 != nil {
+			log.Println(err1)
+			closeDBConnection()
+			return 0, -1
+		}
+
+		inserted = inserted + 1
+
+	}
+
+	closeDBConnection()
+
+	return inserted, 200
+
+}

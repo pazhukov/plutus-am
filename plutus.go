@@ -24,8 +24,8 @@ func StartServer() {
 	router.HandleFunc("/currency/{id}", DeleteCurrency).Methods("DELETE")
 	//router.HandleFunc("/currency/rates", GetLastCurrencyRate).Methods("GET")
 	//router.HandleFunc("/currency/rates/{date}", GetCurrencyRateByDate).Methods("GET")
-
 	router.HandleFunc("/load/currency-rates", LoadCurrencyRates).Methods("GET")
+	router.HandleFunc("/load/currency-rates/{date}", LoadCurrencyRatesByDate).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":11000", router))
 
