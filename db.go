@@ -604,3 +604,159 @@ func GetCurrencyRatesCBR(onDate string) ([]CurrencyRate, int) {
 	return rates, 200
 
 }
+
+func OwnerNewItem(item Owner) (int, int) {
+	openDBConnection()
+
+	var ownerID int
+	var lastInsertId int64
+
+	res, err := database.Exec("INSERT INTO owners (title) VALUES (?)", item.Title)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return ownerID, -1
+	}
+
+	lastInsertId, err = res.LastInsertId()
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return ownerID, -1
+	}
+
+	ownerID = int(lastInsertId)
+
+	closeDBConnection()
+	return ownerID, 200
+
+}
+
+func OnwerUpdateItem(item Owner) int {
+	openDBConnection()
+
+	rows, err := database.Query("SELECT id FROM owners WHERE id = ?", item.ID)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		count = count + 1
+	}
+
+	if count == 0 {
+		closeDBConnection()
+		return 404
+	}
+
+	_, err_upd := database.Exec("UPDATE owners SET title = ? WHERE id = ?", item.Title, item.ID)
+	if err_upd != nil {
+		log.Println(err_upd)
+		closeDBConnection()
+		return -1
+	}
+
+	closeDBConnection()
+	return 200
+
+}
+
+func OnwerGetItem(ownerID int) (Owner, int) {
+	openDBConnection()
+
+	item := Owner{}
+
+	rows, err := database.Query("SELECT id, title FROM owners WHERE id = ?", ownerID)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return item, -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&item.ID, &item.Title)
+		if err != nil {
+			log.Println(err)
+			closeDBConnection()
+			return item, -1
+		}
+		count = count + 1
+	}
+
+	if count == 0 {
+		closeDBConnection()
+		return item, 404
+	}
+
+	closeDBConnection()
+	return item, 200
+
+}
+
+func OnwerDeleteItem(ownerID int) int {
+	openDBConnection()
+
+	rows, err := database.Query("SELECT id FROM owners WHERE id = ?", ownerID)
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return -1
+	}
+
+	count := 0
+	defer rows.Close()
+	for rows.Next() {
+		count = count + 1
+	}
+
+	if count == 0 {
+		closeDBConnection()
+		return 404
+	}
+
+	_, err_upd := database.Exec("DELETE FROM owners WHERE id = ?", ownerID)
+	if err_upd != nil {
+		log.Println(err_upd)
+		closeDBConnection()
+		return -1
+	}
+
+	closeDBConnection()
+	return 200
+
+}
+
+func OwnerListItem() ([]Owner, int) {
+	openDBConnection()
+
+	list := []Owner{}
+
+	rows, err := database.Query("SELECT id, title FROM owners")
+	if err != nil {
+		log.Println(err)
+		closeDBConnection()
+		return list, -1
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		item := Owner{}
+		err := rows.Scan(&item.ID, &item.Title)
+		if err != nil {
+			log.Println(err)
+			closeDBConnection()
+			return list, -1
+		}
+		list = append(list, item)
+	}
+
+	closeDBConnection()
+	return list, 200
+
+}
