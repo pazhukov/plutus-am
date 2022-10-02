@@ -1,0 +1,708 @@
+{
+	"info": {
+		"_postman_id": "43a87731-412d-47af-9af1-74f1e45bf25a",
+		"name": "PlutusAM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21929040"
+	},
+	"item": [
+		{
+			"name": "New Currency",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":978,\r\n    \"title\": \"EUR\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/currency/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"currency",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Asset",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"GAZP\",\r\n    \"type\": 1,\r\n    \"currency\": 810,\r\n    \"codes\": [\r\n        {\r\n            \"code\": \"GAZP\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/asset/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"asset",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Asset Code",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":13,\r\n    \"code\":\"SGZH\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/code/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"code",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Owner",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Personal 2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/owner/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"owner",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Depo Account",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"owner_id\": 1,\r\n    \"title\": \"depo 2\",\r\n    \"code\": \"D123\",\r\n    \"broker\": \"FFIN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/account/depo/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"account",
+						"depo",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Bank Account",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"owner_id\": 1,\r\n    \"title\": \"bank 1\",\r\n    \"currency\": 810,\r\n    \"code\": \"D123\",\r\n    \"broker\": \"FFIN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/account/bank/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"account",
+						"bank",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Currency",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":978,\r\n    \"title\": \"Euro\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/currency/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"currency",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Asset",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":15,\r\n    \"title\": \"WIM Gold ETF\",\r\n    \"type\": 1,\r\n    \"currency\": 810,\r\n    \"codes\": [\r\n        {\r\n            \"code\": \"GOLD\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/asset/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"asset",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Owner",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 2,\r\n    \"title\": \"Personal 3\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/owner/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"owner",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Depo Account",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 2,\r\n    \"owner_id\": 1,\r\n    \"title\": \"depo 1\",\r\n    \"code\": \"FHFY12\",\r\n    \"broker\": \"FFIN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/account/depo/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"account",
+						"depo",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Bank Account",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 2,\r\n    \"owner_id\": 1,\r\n    \"title\": \"bank 1\",\r\n    \"currency\": 810,\r\n    \"code\": \"FKKD12\",\r\n    \"broker\": \"FFIN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/account/bank/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"account",
+						"bank",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Currency",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/currency/840",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"currency",
+						"840"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Asset",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/asset/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"asset",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Owner",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/owner/1/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"owner",
+						"1",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Depo Account",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/account/depo/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"account",
+						"depo",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Bank Account",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/account/bank/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"account",
+						"bank",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Currency Rate",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/load/currency-rates",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"load",
+						"currency-rates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Currency Rate",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/currency-rates",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"currency-rates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Currency Rate Date",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/load/currency-rates/2022-08-02",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"load",
+						"currency-rates",
+						"2022-08-02"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Currency Rate Date",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/currency-rates/2022-08-01",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"currency-rates",
+						"2022-08-01"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Currency",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/currency/978",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"currency",
+						"978"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Asset",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/asset/13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"asset",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Asset Code",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":22,\r\n    \"code\":\"GAZP\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:11000/code/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"code",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Owner",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/owner/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"owner",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Depo Account",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/account/depo/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"account",
+						"depo",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Bank Account",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/account/bank/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"account",
+						"bank",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Asset List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/assets/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"assets",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Owner List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/owners/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"owners",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Owner Accounts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:11000/account/owner/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "11000",
+					"path": [
+						"account",
+						"owner",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
