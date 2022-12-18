@@ -1,6 +1,8 @@
-PLUTUS AM - REST API for Asset Management Company
+## PLUTUS AM - REST API for Asset Management Company
 
-`
+Run app 
+
+```
 go run app.go db.json
-`
+```
 
