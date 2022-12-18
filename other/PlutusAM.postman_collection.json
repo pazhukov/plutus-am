@@ -689,7 +689,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:11000/account/owner/3",
+					"raw": "http://localhost:11000/account/owner/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -698,7 +698,7 @@
 					"path": [
 						"account",
 						"owner",
-						"3"
+						"1"
 					]
 				}
 			},
