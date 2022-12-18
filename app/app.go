@@ -1,19 +1,36 @@
 package main
 
 import (
+	"encoding/json"
+	"flag"
 	"log"
 	"os"
-	"path/filepath"
 	"plutus"
 )
 
+var pathToConfig string
+
 func main() {
 
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		log.Fatal(err)
+	flag.StringVar(&pathToConfig, "dbcfg", "db.json", "path to db config")
+	flag.Parse()
+
+	log.Println("cfg:", pathToConfig)
+
+	file, err_file := os.Open(pathToConfig)
+	if err_file != nil {
+		log.Fatal(err_file)
 	}
-	log.Println(dir)
+	decoder := json.NewDecoder(file)
+	dbcfg := plutus.ConnectionSetting{}
+	err := decoder.Decode(&dbcfg)
+	if err != nil {
+		log.Println("error:", err)
+	}
+
+	plutus.ConnectionString = dbcfg.User + ":" + dbcfg.Password + "@tcp"
+	plutus.ConnectionString = plutus.ConnectionString + "(" + dbcfg.Server + ":" + dbcfg.Port + ")/" + dbcfg.DBname
+	plutus.ConnectionString = plutus.ConnectionString + "?charset=" + dbcfg.Charset
 
 	plutus.StartServer()
 

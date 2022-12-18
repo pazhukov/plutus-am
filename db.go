@@ -8,9 +8,19 @@ import (
 )
 
 var database *sql.DB
+var ConnectionString string
+
+type ConnectionSetting struct {
+	User     string `json:"user"`
+	Password string `json:"password"`
+	Server   string `json:"server"`
+	Port     string `json:"port"`
+	DBname   string `json:"dbname"`
+	Charset  string `json:"charset"`
+}
 
 func openDBConnection() {
-	db, err := sql.Open("mysql", "root:usbw@tcp(localhost:3307)/plutus-am?charset=utf8")
+	db, err := sql.Open("mysql", ConnectionString)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -1099,4 +1109,14 @@ func OwnerGetAccounts(ownerID int) (OwnerAccounts, int) {
 	closeDBConnection()
 	return item, 200
 
+}
+
+func DepoOperationNewItem(item OperationDepoInOut) (int, int) {
+	openDBConnection()
+
+	var depoOperationID int
+	//var lastInsertId int64
+
+	closeDBConnection()
+	return depoOperationID, 200
 }
