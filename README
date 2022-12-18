@@ -2,7 +2,5 @@
 
 Run app 
 
-```
 go run app.go db.json
-```
 
